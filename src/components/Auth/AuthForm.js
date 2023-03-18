@@ -1,11 +1,9 @@
 import { useRef, useState } from "react";
-import UserProfile from "../Profile/UserProfile";
 import classes from "./AuthForm.module.css";
 
 const AuthForm = () => {
   const [isLogin, setIsLogin] = useState(true);
   const [isLoading, setIsLoding] = useState(false);
-  //const [isError, setIsError] = useState("");
 
   const InpurEmailRef = useRef("");
   const InputPasswordRef = useRef("");
@@ -19,55 +17,48 @@ const AuthForm = () => {
     const enternedEmail = InpurEmailRef.current.value;
     const enternedPassword = InputPasswordRef.current.value;
 
-    //add validation
-    // if (enternedEmail === "" && enternedPassword === "") {
-    //   setIsError("Please enter email and password");
-    // } else {
-    //   setIsError("");
-    // }
-
     setIsLoding(true);
+    let url;
     if (isLogin) {
-      //...
+      url =
+        "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyA8NBmruAkzigSMs1HAVcEqIAt6pEzCNM8";
     } else {
-      // setTimeout(() => {
-      fetch(
-        "https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyA8NBmruAkzigSMs1HAVcEqIAt6pEzCNM8",
-        {
-          method: "POST",
-          body: JSON.stringify({
-            email: enternedEmail,
-            password: enternedPassword,
-            returnSecureToken: true,
-          }),
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      ).then((res) => {
+      url =
+        "https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyA8NBmruAkzigSMs1HAVcEqIAt6pEzCNM8";
+    }
+    fetch(url, {
+      method: "POST",
+      body: JSON.stringify({
+        email: enternedEmail,
+        password: enternedPassword,
+        returnSecureToken: true,
+      }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => {
         setIsLoding(false);
         if (res.ok) {
-          // setIsLoding("Sending Request..");
-          // setTimeout(() => {
-          //   setIsLoding("Sending Succesfull...");
-          // }, 2000);
-          // setTimeout(() => {
-          //   setIsLoding("");
-          //   InpurEmailRef.current.value = "";
-          //   InputPasswordRef.current.value = "";
-          // }, 3000);
+          return res.json();
         } else {
           return res.json().then((data) => {
             let errorMessage = "Authentication failed";
-            if (data && data.error && data.error.message) {
-              errorMessage = data.error.message;
-            }
-            alert(errorMessage);
+            // if (data && data.error && data.error.message) {
+            //   errorMessage = data.error.message;
+            // }
+
+            throw new Error(errorMessage);
           });
         }
+      })
+      .then((data) => {
+        // this then for is login if the user login then this will happen
+        console.log(data);
+      })
+      .catch((err) => {
+        alert(err.message);
       });
-      //}, 2000);
-    }
   };
   return (
     <section className={classes.auth}>
@@ -82,12 +73,6 @@ const AuthForm = () => {
           <label htmlFor="password">Your Password</label>
           <input type="password" id="password" ref={InputPasswordRef} />
         </div>
-        {/* <div>
-          <p className={classes.loadingMess}>{isLoading}</p>
-        </div> */}
-        {/* <span className={classes.Formerror}>
-          <em>{isError}</em>
-        </span> */}
 
         <div className={classes.actions}>
           {!isLoading && (
