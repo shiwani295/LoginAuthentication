@@ -1,9 +1,12 @@
-import { useRef, useState } from "react";
+import { useContext, useRef, useState } from "react";
+import AuthContext from "../../store/auth-context";
 import classes from "./AuthForm.module.css";
 
 const AuthForm = () => {
   const [isLogin, setIsLogin] = useState(true);
   const [isLoading, setIsLoding] = useState(false);
+  //give the token or check the useris loggedin or not
+  const authCxt = useContext(AuthContext);
 
   const InpurEmailRef = useRef("");
   const InputPasswordRef = useRef("");
@@ -44,17 +47,13 @@ const AuthForm = () => {
         } else {
           return res.json().then((data) => {
             let errorMessage = "Authentication failed";
-            // if (data && data.error && data.error.message) {
-            //   errorMessage = data.error.message;
-            // }
-
             throw new Error(errorMessage);
           });
         }
       })
       .then((data) => {
-        // this then for is login if the user login then this will happen
-        console.log(data);
+        // user login with correct token id
+        authCxt.login(data.idToken);
       })
       .catch((err) => {
         alert(err.message);
@@ -93,4 +92,3 @@ const AuthForm = () => {
 };
 
 export default AuthForm;
-//emailValid = value.match(/^([\w.%+-]+)@([\w-]+\.)+([\w]{2,})$/i);
