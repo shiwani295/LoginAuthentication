@@ -1,10 +1,12 @@
 import { useContext, useRef, useState } from "react";
+import { useHistory } from "react-router-dom";
 import AuthContext from "../../store/auth-context";
 import classes from "./AuthForm.module.css";
 
 const AuthForm = () => {
   const [isLogin, setIsLogin] = useState(true);
   const [isLoading, setIsLoding] = useState(false);
+  const history = useHistory();
   //give the token or check the useris loggedin or not
   const authCxt = useContext(AuthContext);
 
@@ -54,6 +56,7 @@ const AuthForm = () => {
       .then((data) => {
         // user login with correct token id
         authCxt.login(data.idToken);
+        history.replace("/");
       })
       .catch((err) => {
         alert(err.message);
