@@ -7,17 +7,20 @@ const AuthContext = React.createContext({
 });
 
 export const AuthContextProvider = (props) => {
-  const [token, setToken] = useState(null); //for the token if we have token user isloggedin if dont have not loggedin
+  const Initialtoken = localStorage.getItem("token");
+  const [token, setToken] = useState(Initialtoken); //for the token if we have token user isloggedin if dont have not loggedin
 
   const userIsLoggedIn = !!token; //this is the feature of js it will give boolean value true and (is sting is emptythen return )false
 
   const loginHandler = (token) => {
     //if the user login set the token
     setToken(token);
+    localStorage.setItem("token", token);
   };
   const logoutHandler = () => {
     //if the user logout set the token null
     setToken(null);
+    localStorage.removeItem("token");
   };
 
   const contextValue = {
@@ -37,4 +40,4 @@ export const AuthContextProvider = (props) => {
 
 export default AuthContext;
 
-//this authentication apply on authform,mainNavigation,index,js
+//this authentication apply on - Auth-context-> index,js->authform->mainNavigation,
